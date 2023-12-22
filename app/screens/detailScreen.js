@@ -1,6 +1,6 @@
 
   import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, ImageBackground,  } from 'react-native'
-  import React, { useEffect, useRef } from 'react'
+  import React, { useEffect, useState, useRef } from 'react'
   import { useSelector } from 'react-redux';
   import 
      Animated, { 
@@ -13,17 +13,52 @@
     // interpolate,
     // Extrapolate,
   } from 'react-native-reanimated';
-  
+  import Icon from 'react-native-vector-icons/Ionicons';
   import { IconsButton, HorizontalCourses, LineDivider, FilterModal, IconLabel } from '../components';
   import { COLORS, FONTS, SIZES, images, icons, dummyData, data } from '../constants';
   import { SharedElement } from 'react-navigation-shared-element';
    import  BottomSheet  from 'react-native-raw-bottom-sheet';
+import { CheckBox } from 'react-native-elements';
+
+
+
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList)
   
   const HEADER_HEIGHT = 250;
   
   const RestaurantDetail = ({route, navigation, item}) => {
   const {restaurant} = route.params;
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedButton, setSelectedButton] = useState(null);
+  const [checkboxState, setCheckboxState] = useState({});
+
+  const handleCheckboxChange = (checkboxName) => {
+    setCheckboxState({
+      ...checkboxState,
+      [checkboxName]: !checkboxState[checkboxName],
+    });
+  };
+  const ButtonData = [
+    { id: 1, name: "Plus Demandé" },
+    { id: 2, name: "Mieux Noté" },
+    { id: 3, name: "Specialité"},
+    { id: 4, name: "Specialité"},
+  ];
+
+  const cardData = [
+    { id: 1, name: "Plus Demandé", icon: "bar-chart-outline" },
+    { id: 2, name: "Mieux Noté", icon: "star-outline" },
+    { id: 3, name: "Specialité", icon: "flame-outline" },
+  ];
+  const handleCardPress = (cardId) => {
+    setSelectedCard(cardId);
+    // Ajoutez ici la logique à exécuter lors de la sélection de la carte
+  };
+
+  handleCardPressButton = (buttonId) => {
+    setSelectedButton(buttonId)
+  }
+ 
     useEffect(() => {
 
     }, [])
@@ -423,7 +458,7 @@
           <BottomSheet
             ref={bottomSheetRef}
             closeOnDragDown={true}
-            height={250}
+            height={450}
             openDuration={250}
             customStyles={{
               container: {
@@ -433,10 +468,61 @@
               },
             }}
           >
-<View>
-        <Text style={{textAlign: 'center', fontSize: SIZES.body2}}>Liste des element A filtrer</Text>
-      </View>
-
+                  <Text style={{textAlign: 'center', fontWeight: 500, fontSize: SIZES.body2, color: COLORS.black, marginBottom: 10}}>Filtre de Recherche</Text>
+                <View style={styles.container}>
+                {cardData.map((card) => (
+              <TouchableOpacity
+                key={card.id}
+                style={[
+                  styles.card,
+                  selectedCard === card.id && styles.selectedCard,
+                ]}
+                onPress={() => handleCardPress(card.id)}
+              >
+                <Icon name={card.icon} size={50} color="#fff" />
+                <Text style={styles.title}>{card.name}</Text>
+              </TouchableOpacity>
+            ))}
+                </View>
+                <Text style={{fontSize: SIZES.body2, fontWeight: 500, marginLeft: 22, marginTop: 12, color: COLORS.black}}>Precaution Medical</Text>
+                <View style={styles.containe}>
+            <View style={styles.row}>
+              <Text style={styles.item}>Diabetique</Text>
+              <CheckBox
+                checked={checkboxState.diabetique}
+                onPress={() => handleCheckboxChange('diabetique')}
+              />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.row}>
+              <Text style={styles.item}>Hypertendu</Text>
+              <CheckBox
+                checked={checkboxState.hypertendu}
+                onPress={() => handleCheckboxChange('hypertendu')}
+              />
+            </View>
+            <View style={styles.separator} />
+          </View>
+          <Text></Text>
+          <View style={styles.container}>
+                {ButtonData.map((card) => (
+              <TouchableOpacity
+                key={card.id}
+                style={[
+                  styles.buttonCard,
+                  selectedButton === card.id && styles.selectedButton,
+                ]}
+                onPress={() => handleCardPressButton(card.id)}
+              >
+                <Text style={styles.title}>{card.name}</Text>
+              </TouchableOpacity>
+            ))}
+                </View>
+                <TouchableOpacity
+                  style={styles.touchabutton}
+                  onPress={() => {}}>
+                  <Text style={{fontSize: SIZES.body2, color: COLORS.white, fontWeight: 500}}>Filtrer</Text>
+                </TouchableOpacity>
           </BottomSheet>
           </>
       )
@@ -511,7 +597,71 @@
     )
   }
   const styles = StyleSheet.create({
-  
+    container: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+    },
+    card: {
+      width: 100,
+      height: 100,
+      backgroundColor: COLORS.gray30,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+    },
+    selectedCard: {
+      backgroundColor: COLORS.primary,
+    },
+    title: {
+      marginTop: 8,
+      color: '#fff',
+    },
+    containe: {
+      flexDirection: 'column',
+      paddingHorizontal: 16,
+     
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    item: {
+      flex: 1,
+      fontSize: 16,
+      paddingVertical: 8,
+      marginHorizontal: 10,
+      color: COLORS.accent
+    },
+    separator: {
+      //flex: 1,
+      height: 1,
+      backgroundColor: '#ccc',
+      marginVertical: -8,
+      marginHorizontal: 22
+    },
+    buttonCard: {
+      width: 100,
+      height: 40,
+      backgroundColor: COLORS.gray30,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+      marginBottom: 12
+      
+    },
+    selectedButton: {
+      backgroundColor: COLORS.primary,
+    },
+    touchabutton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: COLORS.primary, // couleur de fond du bouton
+        padding: 10,
+        borderRadius: 25,
+        marginHorizontal: 28
+    }
   })
   
 

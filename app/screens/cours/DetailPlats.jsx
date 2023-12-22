@@ -1,16 +1,27 @@
-import { View, Text, Animated, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Animated, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native'
 import React, { useState, useRef } from 'react'
 import { COLORS, FONTS, icons, images, SIZES } from '../../constants'
 import { SharedElement } from 'react-navigation-shared-element';
 import { IconsButton } from '../../components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import  BottomSheet  from 'react-native-raw-bottom-sheet';
+import { CheckBox } from 'react-native-elements';
 
 export default function DetailPlats({route, navigation}) {
   const { plat } = route.params;
   const bottomSheetRef = useRef(null);
   const [cart, setCart] = useState(0);
   const [showCounter, setShowCounter] = useState(false);
+  const [text, setText] = useState('');
+  const [checkboxState, setCheckboxState] = useState({});
+
+  const handleCheckboxChange = (checkboxName) => {
+    setCheckboxState({
+      ...checkboxState,
+      [checkboxName]: !checkboxState[checkboxName],
+    });
+  };
+
   function BackHandler() {
     navigation.goBack()
   }
@@ -288,7 +299,7 @@ export default function DetailPlats({route, navigation}) {
     <BottomSheet
             ref={bottomSheetRef}
             closeOnDragDown={true}
-            height={250}
+            height={350}
             openDuration={250}
             customStyles={{
               container: {
@@ -299,7 +310,41 @@ export default function DetailPlats({route, navigation}) {
             }}
           >
       <View>
-        <Text style={{textAlign: 'center', fontSize: SIZES.body2}}>Liste des restriction client</Text>
+        <Text style={{textAlign: 'center', fontSize: SIZES.body2}}>recommandation client</Text>
+        <View style={styles.containe}>
+      <TextInput
+        style={styles.input}
+        placeholder="Entrez vos restrictions alimentaires"
+        value={text}
+        onChangeText={(newText) => setText(newText)}
+      />
+    </View>
+    <Text style={{fontSize: SIZES.body2, fontWeight: 500, marginLeft: 22, marginTop: 12, color: COLORS.black}}>je ne veux pas les ingredients: </Text>
+    <View style={styles.contain}>
+            <View style={styles.row}>
+              <Text style={styles.item}>Cube</Text>
+              <CheckBox
+                checked={checkboxState.cube}
+                onPress={() => handleCheckboxChange('cube')}
+              />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.row}>
+              <Text style={styles.item}>Epices</Text>
+              <CheckBox
+                checked={checkboxState.epices}
+                onPress={() => handleCheckboxChange('epices')}
+              />
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.row}>
+              <Text style={styles.item}>Sel</Text>
+              <CheckBox
+                checked={checkboxState.sel}
+                onPress={() => handleCheckboxChange('sel')}
+              />
+            </View>
+          </View>
       </View>
 
           </BottomSheet>
@@ -322,5 +367,43 @@ const styles = StyleSheet.create({
      flexDirection: "row",
      alignItems: 'center',
      justifyContent: 'space-evenly'
-  }
+  },
+  containe: {
+    margin: 16,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  validationText: {
+    color: 'red',
+    marginTop: 8,
+  },
+  contain: {
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+   
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  item: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 8,
+    marginHorizontal: 10,
+    color: COLORS.accent
+  },
+  separator: {
+    //flex: 1,
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: -8,
+    marginHorizontal: 22
+  },
 })

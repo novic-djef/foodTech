@@ -8,7 +8,6 @@ import { COLORS, FONTS, icons, SIZES, images, dummyData, data } from '../constan
 const { width } = Dimensions.get('screen');
 const colors = ['#CDAF3F', '#6CE8C6', '#E89EEB'];
 import Icon from 'react-native-vector-icons/Feather';
-import { showDetailListPending, showDetailListError, showDetailListReset, showDetailListSucsess } from '../redux/action/restaurantAction';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import novic from '../../assets/images/novic.png'
